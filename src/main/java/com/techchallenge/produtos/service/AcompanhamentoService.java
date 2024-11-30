@@ -4,6 +4,7 @@ package com.techchallenge.produtos.service;
 import com.techchallenge.produtos.model.produtos.Acompanhamento;
 import com.techchallenge.produtos.repository.AcompanhamentoRepository;
 import com.techchallenge.produtos.usecase.AcompanhamentoUseCase;
+import jakarta.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,22 +16,15 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class AcompanhamentoUseCaseImpl implements AcompanhamentoUseCase {
+public class AcompanhamentoService implements AcompanhamentoUseCase {
 
     @Autowired
     AcompanhamentoRepository acompanhamentoRepository;
 
     public ResponseEntity<String> criarAcompanhamento(Acompanhamento acompanhamento) {
         try {
-            if (buscarAcompanhamento(gerarNomeBanco(acompanhamento.getNome())).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                acompanhamentoRepository.save(
-                        new Acompanhamento(
-                                acompanhamento.getNome(),
-                                gerarNomeBanco(acompanhamento.getNome()),
-                                acompanhamento.getDescricao(),
-                                acompanhamento.getPreco()
-                        )
-                );
+            if (!buscarAcompanhamento(acompanhamento.getNomeBanco()).hasBody()) {
+                acompanhamentoRepository.save(acompanhamento);
                 log.info("{} criado", acompanhamento.getNome());
                 return new ResponseEntity<>(acompanhamento.getNome() + " salvo no banco de dados", HttpStatus.CREATED);
             } else {
@@ -43,13 +37,9 @@ public class AcompanhamentoUseCaseImpl implements AcompanhamentoUseCase {
         }
     }
 
-    private String gerarNomeBanco(String nome) {
-        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
-        return nomeBanco;
-    }
-
-    public ResponseEntity<Acompanhamento> buscarAcompanhamento(String nomeBanco) {
+    public ResponseEntity<Acompanhamento> buscarAcompanhamento(@Nullable String nomeBanco) {
         Optional<Acompanhamento> acompanhamentoData_ = acompanhamentoRepository.findByNomeBanco(nomeBanco);
+
         if (acompanhamentoData_.isPresent()) {
             return new ResponseEntity<>(acompanhamentoData_.get(), HttpStatus.OK);
         } else {

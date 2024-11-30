@@ -15,22 +15,15 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class LancheUseCaseImpl implements LancheUseCase {
+public class LancheService implements LancheUseCase {
 
     @Autowired
     LancheRepository lancheRepository;
 
     public ResponseEntity<String> criarLanche(Lanche lanche) {
         try {
-            if (buscarLanche(gerarNomeBanco(lanche.getNome())).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                lancheRepository.save(
-                        new Lanche(
-                                lanche.getNome(),
-                                gerarNomeBanco(lanche.getNome()),
-                                lanche.getDescricao(),
-                                lanche.getPreco()
-                        )
-                );
+            if (!buscarLanche(lanche.getNomeBanco()).hasBody()) {
+                lancheRepository.save(lanche);
                 log.info("{} criado", lanche.getNome());
                 return new ResponseEntity<>(lanche.getNome() + " salvo no banco de dados", HttpStatus.CREATED);
             } else {
@@ -41,11 +34,6 @@ public class LancheUseCaseImpl implements LancheUseCase {
             log.error(e);
             return new ResponseEntity<>(e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public String gerarNomeBanco(String nome) {
-        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
-        return nomeBanco;
     }
 
     public ResponseEntity<Lanche> buscarLanche(String nomeBanco) {

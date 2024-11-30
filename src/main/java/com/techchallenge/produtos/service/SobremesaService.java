@@ -15,22 +15,15 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class SobremesaUseCaseImpl implements SobremesaUseCase {
+public class SobremesaService implements SobremesaUseCase {
 
     @Autowired
     SobremesaRepository sobremesaRepository;
 
     public ResponseEntity<String> criarSobremesa(Sobremesa sobremesa) {
         try {
-            if (buscarSobremesa(gerarNomeBanco(sobremesa.getNome())).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                sobremesaRepository.save(
-                        new Sobremesa(
-                                sobremesa.getNome(),
-                                gerarNomeBanco(sobremesa.getNome()),
-                                sobremesa.getDescricao(),
-                                sobremesa.getPreco()
-                        )
-                );
+            if (!buscarSobremesa(sobremesa.getNomeBanco()).hasBody()) {
+                sobremesaRepository.save(sobremesa);
                 log.info("{} criado", sobremesa.getNome());
                 return new ResponseEntity<>(sobremesa.getNome() + " salvo no banco de dados", HttpStatus.CREATED);
             } else {
@@ -41,11 +34,6 @@ public class SobremesaUseCaseImpl implements SobremesaUseCase {
             log.error(e);
             return new ResponseEntity<>(e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String gerarNomeBanco(String nome) {
-        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
-        return nomeBanco;
     }
 
     public ResponseEntity<Sobremesa> buscarSobremesa(String nomeBanco) {

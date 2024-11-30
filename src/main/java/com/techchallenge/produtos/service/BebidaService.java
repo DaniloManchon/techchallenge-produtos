@@ -15,23 +15,15 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class BebidaUseCaseImpl implements BebidaUseCase {
+public class BebidaService implements BebidaUseCase {
 
     @Autowired
     BebidaRepository bebidaRepository;
 
     public ResponseEntity<String> criarBebida(Bebida bebida) {
         try {
-            if (buscarBebida(gerarNomeBanco(bebida.getNome())).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                bebidaRepository.save(
-                        new Bebida(
-                                bebida.getNome(),
-                                gerarNomeBanco(bebida.getNome()),
-                                bebida.getDescricao(),
-                                bebida.getPreco(),
-                                bebida.getTamanhos()
-                        )
-                );
+            if (!buscarBebida(bebida.getNomeBanco()).hasBody()) {
+                bebidaRepository.save(bebida);
                 log.info("{} criado", bebida.getNome());
                 return new ResponseEntity<>(bebida.getNome() + " salvo no banco de dados", HttpStatus.CREATED);
             } else {
@@ -42,11 +34,6 @@ public class BebidaUseCaseImpl implements BebidaUseCase {
             log.error(e);
             return new ResponseEntity<>(e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String gerarNomeBanco(String nome) {
-        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
-        return nomeBanco;
     }
 
     public ResponseEntity<Bebida> buscarBebida(String nomeBanco) {
@@ -68,7 +55,7 @@ public class BebidaUseCaseImpl implements BebidaUseCase {
         try {
             Bebida bebidaData_ = buscarBebida(nomeBanco).getBody();
             bebidaData_.setDescricao(bebida.getDescricao());
-            bebidaData_.setTamanhos(bebida.getTamanhos());
+            bebidaData_.setTamanho(bebida.getTamanho());
             bebidaData_.setPreco(bebida.getPreco());
             bebidaRepository.save(bebidaData_);
             log.info("{} atualizado com sucesso", bebidaData_.getNome());

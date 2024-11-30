@@ -1,6 +1,5 @@
 package com.techchallenge.produtos.controller;
 
-
 import com.techchallenge.produtos.model.produtos.Acompanhamento;
 import com.techchallenge.produtos.usecase.AcompanhamentoUseCase;
 import org.springframework.beans.factory.annotation.Autowired;

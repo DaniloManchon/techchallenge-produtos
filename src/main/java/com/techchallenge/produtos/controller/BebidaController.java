@@ -37,7 +37,7 @@ public class BebidaController {
     }
 
     @GetMapping
-    public ResponseEntity<Bebida> buscarBebidaNome(@RequestParam("nomeBanco") String nomeBanco) {
+    public ResponseEntity<Bebida> buscarBebida(@RequestParam("nomeBanco") String nomeBanco) {
         try {
             return bebidaUseCase.buscarBebida(nomeBanco);
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class BebidaController {
 
 
     @PutMapping
-    public ResponseEntity atualizarBebidas(@RequestParam("nomeBanco") String nomeBanco, @RequestBody Bebida bebida) {
+    public ResponseEntity atualizarBebida(@RequestParam("nomeBanco") String nomeBanco, @RequestBody Bebida bebida) {
         try {
             return bebidaUseCase.atualizarBebida(nomeBanco, bebida);
         } catch (Exception e) {

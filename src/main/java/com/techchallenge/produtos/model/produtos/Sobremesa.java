@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Document
 public class Sobremesa extends Produto {
-    public Sobremesa(String nome, String nomeBanco, String descricao, float preco) {
-        super(nome, nomeBanco, descricao, preco);
+    public Sobremesa(String nome, String descricao, float preco, boolean disponivel) {
+        super(nome, descricao, preco, disponivel);
     }
 }

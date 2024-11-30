@@ -19,11 +19,18 @@ public class Produto {
 
     private String descricao;
     private float preco;
+    private boolean disponivel;
 
-    public Produto(String nome, String nomeBanco, String descricao, float preco) {
+    public Produto(String nome, String descricao, float preco, boolean disponivel) {
         this.nome = nome;
-        this.nomeBanco = nomeBanco;
+        this.nomeBanco = gerarNomeBanco(nome);
         this.descricao = descricao;
         this.preco = preco;
+        this.disponivel = disponivel;
+    }
+
+    private String gerarNomeBanco(String nome) {
+        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
+        return nomeBanco;
     }
 }

@@ -5,16 +5,24 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 
 @Getter
 @Setter
 @Document
 public class Bebida extends Produto {
-    private List<String> tamanhos;
 
-    public Bebida(String nome, String nomeBanco, String descricao, float preco, List<String> tamanhos) {
-        super(nome, nomeBanco, descricao, preco);
-        this.tamanhos = tamanhos;
+    private String tamanho;
+
+    public Bebida(String nome, String descricao, float preco, boolean disponivel, String tamanho) {
+        super(nome, descricao, preco, disponivel);
+        this.tamanho = tamanho;
+        this.setNomeBanco(gerarNomeBanco(nome));
     }
+
+    private String gerarNomeBanco(String nome) {
+        String nomeBanco = nome.replaceAll(" ", "_").toLowerCase();
+        nomeBanco = nomeBanco + "_" + tamanho;
+        return nomeBanco;
+    }
+
 }
